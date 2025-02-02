@@ -1,63 +1,68 @@
+Here is the formatted README with the repository details included:
+
 # 🎮 Python Tic-Tac-Toe Online
 
 A real-time multiplayer Tic-Tac-Toe game built with Python FastAPI and WebSockets. Play with friends in unique game rooms with live updates!
 
-### 🚀 Features
+## 🚀 Features
 
-🔹 Real-time Multiplayer – Instant game updates using WebSockets
+- **Real-time Multiplayer** – Instant game updates using WebSockets
+- **Multiple Game Rooms** – Play multiple games simultaneously
+- **Responsive Design** – Smooth gameplay on desktop & mobile
+- **Easy Deployment** – Optimized for Vercel hosting
+- **Simple & Intuitive UI** – Clean, user-friendly interface
 
-🔹 Multiple Game Rooms – Play multiple games simultaneously
+## 🛠 Tech Stack
 
-🔹 Responsive Design – Smooth gameplay on desktop & mobile
+- **Backend**: Python FastAPI
+- **Frontend**: HTML, CSS, JavaScript
+- **WebSockets**: Real-time communication
+- **Hosting**: Vercel
 
-🔹 Easy Deployment – Optimized for Vercel hosting
+## 🌐 Live Demo
 
-🔹 Simple & Intuitive UI – Clean, user-friendly interface
-
-###  🛠 Tech Stack
-
-Backend: Python FastAPI
-
-Frontend: HTML, CSS, JavaScript
-
-WebSockets: Real-time communication
-
-### Hosting: Vercel
-
-### 🌐 Live Demo
-
-🔗 Live Game (Add link after deployment)
+[🔗 Live Game] 
 
 ## 💻 Local Development
 
 Follow these steps to run the project locally:
 
-### 1️⃣ Clone the Repository
+1. **Clone the Repository**
+    ```sh
+    git clone https://github.com/masum79cse/python-tictactoe-online.git
+    cd python-tictactoe-online
+    ```
 
-git clone https://github.com/masum79cse/python-tictactoe-online.git
-cd python-tictactoe-online
+2. **Install Dependencies**
+    ```sh
+    pip install -r requirements.txt
+    ```
 
-### 2️⃣ Install Dependencies
+3. **Run the Development Server**
+    ```sh
+    python main.py
+    ```
 
-pip install -r requirements.txt
+4. **Open in Browser**
 
-### 3️⃣ Run the Development Server
-
-python main.py
-
-### 4️⃣ Open in Browser
-
-Visit http://localhost:8000 to start playing!
+    Visit [http://localhost:8000](http://localhost:8000) to start playing!
 
 ## 🚢 Deployment
 
 This project is pre-configured for Vercel deployment.
 
-1. Steps to Deploy on Vercel:
+### Steps to Deploy on Vercel:
 
-2.  Install Vercel CLI: npm install -g vercel
+1. **Install Vercel CLI**
+    ```sh
+    npm install -g vercel
+    ```
 
-3. Run vercel and follow the prompts
+2. **Deploy**
+    ```sh
+    vercel
+    ```
+    Follow the prompts.
 
 Your game is live! 🎉
 
@@ -71,16 +76,22 @@ We welcome contributions! Feel free to submit issues, feature requests, or pull 
 
 ### How to Contribute:
 
-**Fork the repository**
+1. **Fork the repository**
+2. **Create a new branch**
+    ```sh
+    git checkout -b feature-name
+    ```
+3. **Make your changes & commit**
+    ```sh
+    git commit -m "Add new feature"
+    ```
+4. **Push to your fork**
+    ```sh
+    git push origin feature-name
+    ```
+5. **Open a pull request**
 
-1. Create a new branch: git checkout -b feature-name
-
-2. Make your changes & commit: git commit -m "Add new feature"
-
-3. Push to your fork: git push origin feature-name
-
-### Open a pull request
-
-**🔖 Tags**
+## 🔖 Tags
 
 #python #fastapi #websockets #game #tic-tac-toe #multiplayer #vercel #real-time #web-game
+
