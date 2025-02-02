@@ -8,6 +8,14 @@
     ],
     "routes": [
         {
+            "src": "/ws/(.*)",
+            "dest": "main.py"
+        },
+        {
+            "src": "/create-game",
+            "dest": "main.py"
+        },
+        {
             "src": "/(.*)",
             "dest": "main.py"
         }
