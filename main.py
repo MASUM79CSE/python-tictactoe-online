@@ -1,9 +1,25 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from typing import Dict, List, Optional
 import json
 import uuid
+import os
 
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 class TicTacToeGame:
     def __init__(self):
@@ -62,17 +78,30 @@ class GameManager:
     
     def get_game(self, game_id: str) -> Optional[TicTacToeGame]:
         return self.games.get(game_id)
+    
+    async def broadcast_game_state(self, game_id: str):
+        if game_id in self.games and game_id in self.connections:
+            game_state = self.games[game_id].get_state()
+            for connection in self.connections[game_id].values():
+                await connection.send_json(game_state)
 
 game_manager = GameManager()
 
 @app.get("/")
 async def read_root():
-    return {"message": "Tic-Tac-Toe Server is running"}
+    return FileResponse('static/index.html')
 
 @app.post("/create-game")
 async def create_game():
     game_id = game_manager.create_game()
     return {"gameId": game_id}
+
+@app.get("/game/{game_id}")
+async def get_game_state(game_id: str):
+    game = game_manager.get_game(game_id)
+    if game:
+        return game.get_state()
+    return {"error": "Game not found"}
 
 @app.websocket("/ws/{game_id}/{player}")
 async def websocket_endpoint(websocket: WebSocket, game_id: str, player: str):
@@ -85,17 +114,27 @@ async def websocket_endpoint(websocket: WebSocket, game_id: str, player: str):
     game_manager.connections[game_id][player] = websocket
     
     try:
+        # Send initial game state
+        await websocket.send_json(game.get_state())
+        
         while True:
             data = await websocket.receive_json()
+            
             if data["type"] == "move":
                 row, col = data["row"], data["col"]
-                if game.make_move(row, col):
-                    # Broadcast game state to all players
-                    state = game.get_state()
-                    for conn in game_manager.connections[game_id].values():
-                        await conn.send_json(state)
+                if game.current_player == player:  # Only allow moves from current player
+                    if game.make_move(row, col):
+                        await game_manager.broadcast_game_state(game_id)
     
     except WebSocketDisconnect:
         if game_id in game_manager.connections:
             if player in game_manager.connections[game_id]:
                 del game_manager.connections[game_id][player]
+            # If all players disconnected, clean up the game
+            if not game_manager.connections[game_id]:
+                del game_manager.connections[game_id]
+                del game_manager.games[game_id]
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
