@@ -26,5 +26,5 @@ A modern implementation of the classic Tic-Tac-Toe game, built for the web using
 ## Local Development
 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/python-tictactoe-online.git
+git clone https://github.com/masum79cse/python-tictactoe-online.git
 cd python-tictactoe-online
