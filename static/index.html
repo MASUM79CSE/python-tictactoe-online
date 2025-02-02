@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic-Tac-Toe Online</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+            margin: 20px 0;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            background: #fff;
+        }
+        .cell:hover {
+            background: #f0f0f0;
+        }
+        .status {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .game-info {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .new-game-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tic-Tac-Toe Online</h1>
+        <div class="game-info">
+            <p>Game ID: <span id="gameId">Creating...</span></p>
+            <p>You are: <span id="playerSymbol">X</span></p>
+        </div>
+        <div class="status" id="status">Waiting for opponent...</div>
+        <div class="board" id="board">
+            <div class="cell" data-row="0" data-col="0"></div>
+            <div class="cell" data-row="0" data-col="1"></div>
+            <div class="cell" data-row="0" data-col="2"></div>
+            <div class="cell" data-row="1" data-col="0"></div>
+            <div class="cell" data-row="1" data-col="1"></div>
+            <div class="cell" data-row="1" data-col="2"></div>
+            <div class="cell" data-row="2" data-col="0"></div>
+            <div class="cell" data-row="2" data-col="1"></div>
+            <div class="cell" data-row="2" data-col="2"></div>
+        </div>
+        <button class="new-game-btn" onclick="createNewGame()">New Game</button>
+    </div>
+
+    <script>
+        let ws;
+        let gameId;
+        const playerSymbol = Math.random() < 0.5 ? "X" : "O";
+        document.getElementById("playerSymbol").textContent = playerSymbol;
+
+        async function createNewGame() {
+            const response = await fetch('/create-game', { method: 'POST' });
+            const data = await response.json();
+            connectToGame(data.gameId);
+        }
+
+        function connectToGame(id) {
+            gameId = id;
+            document.getElementById("gameId").textContent = gameId;
+            
+            if (ws) {
+                ws.close();
+            }
+
+            ws = new WebSocket(`${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/${gameId}/${playerSymbol}`);
+            
+            ws.onmessage = (event) => {
+                const gameState = JSON.parse(event.data);
+                updateBoard(gameState);
+                updateStatus(gameState);
+            };
+
+            ws.onclose = () => {
+                document.getElementById("status").textContent = "Connection lost. Please start a new game.";
+            };
+        }
+
+        function updateBoard(gameState) {
+            const cells = document.getElementsByClassName("cell");
+            for (let i = 0; i < cells.length; i++) {
+                const row = parseInt(cells[i].dataset.row);
+                const col = parseInt(cells[i].dataset.col);
+                cells[i].textContent = gameState.board[row][col];
+            }
+        }
+
+        function updateStatus(gameState) {
+            const statusElement = document.getElementById("status");
+            if (gameState.winner) {
+                statusElement.textContent = `Player ${gameState.winner} wins!`;
+            } else if (gameState.isDraw) {
+                statusElement.textContent = "Game is a draw!";
+            } else {
+                statusElement.textContent = `Current player: ${gameState.currentPlayer}`;
+            }
+        }
+
+        document.getElementById("board").addEventListener("click", (event) => {
+            const cell = event.target;
+            if (cell.classList.contains("cell") && !cell.textContent) {
+                const row = parseInt(cell.dataset.row);
+                const col = parseInt(cell.dataset.col);
+                ws.send(JSON.stringify({
+                    type: "move",
+                    row: row,
+                    col: col
+                }));
+            }
+        });
+
+        // Create initial game on load
+        createNewGame();
+    </script>
+</body>
+</html>
