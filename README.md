@@ -25,16 +25,16 @@ A modern implementation of the classic Tic-Tac-Toe game, built for the web using
 
 ## Local Development
 1. Clone the repository
-```bash
+
 git clone https://github.com/masum79cse/python-tictactoe-online.git
 cd python-tictactoe-online
 
 2. Install dependencies
-```bash
+
 pip install -r requirements.txt
 
 3. Run the development server
-```bash
+
 python main.py
 
 4. Open http://localhost:8000 in your browser
@@ -47,7 +47,7 @@ MIT
 
 ##Contributing
 Contributions, issues, and feature requests are welcome!
-```bash
+
 Tags for the repository:
 - python
 - fastapi
